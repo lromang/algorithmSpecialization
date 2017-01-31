@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int maxProd(int *, int);
+long long maxProd(int *, int);
 
 int main(){
   /* Variable declaration n = size of array */
@@ -16,14 +16,15 @@ int main(){
     scanf("%d", &array[i]);
   }
   /* Print maximum product */
-  printf("%d", maxProd(array, n));
+  printf("%lld", maxProd(array, n));
   /* Return */
   return 0;
 }
 
 
-int maxProd(int * array, int n){
-  int i, j, result;
+long long maxProd(int * array, int n){
+  int i, j;
+  long long result;
   /* Initial value for result = -1 */
   result = -1;
   /* Make an all against all product comparison */
@@ -34,7 +35,7 @@ int maxProd(int * array, int n){
        * product is found.
        */
       if(array[i] * array[j] > result){
-        result = array[i] * array[j];
+        result = (long long) array[i] * array[j];
       }
     }
   }
