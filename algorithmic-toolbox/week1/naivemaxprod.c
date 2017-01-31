@@ -3,11 +3,13 @@
 
 long long maxProd(int *, int);
 long long maxProdFast(int *, int);
+int stressTest();
 
 int main(){
+  // stressTest();
   /* Variable declaration n = size of array */
   int *array;
-  int n,i;
+  int n, i;
   /* Read in value for n */
   scanf("%d", &n);
   /* Allocate space for array */
@@ -62,4 +64,23 @@ long long maxProdFast(int * array, int n){
   }
   /* Return result */
   return ((long long) array[maxIndex1]) * array[maxIndex2];
+}
+
+int stressTest(){
+  int n, i;
+  int *array;
+  while(1){
+    /* Max length of test array: 11 entries */
+    n     = rand() % 10 + 2;
+    array = (int*) malloc(n * sizeof(int));
+    for(i = 0; i < n; i++){
+      array[i] = rand() % 100000;
+    }
+    if(maxProd(array, n) != maxProdFast(array, n)) return -1;
+    printf("\n OK n = %d\n array = \n", n);
+    for(i = 0; i < n; i++){
+      printf("%d ", array[i]);
+    }
+    free(array);
+  }
 }
