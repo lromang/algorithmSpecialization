@@ -2,6 +2,7 @@
 #include <stdlib.h>
 
 long long maxProd(int *, int);
+long long maxProdFast(int *, int);
 
 int main(){
   /* Variable declaration n = size of array */
@@ -16,7 +17,7 @@ int main(){
     scanf("%d", &array[i]);
   }
   /* Print maximum product */
-  printf("%lld", maxProd(array, n));
+  printf("%lld", maxProdFast(array, n));
   /* Return */
   return 0;
 }
@@ -34,11 +35,31 @@ long long maxProd(int * array, int n){
        * Update the value of result when a larger
        * product is found.
        */
-      if(array[i] * array[j] > result){
-        result = (long long) array[i] * array[j];
+      if(((long long) array[i]) * array[j] > result){
+        result = ((long long) array[i]) * array[j];
       }
     }
   }
   /* Return result */
   return result;
+}
+
+long long maxProdFast(int * array, int n){
+  int maxIndex1, maxIndex2, i;
+  /* Go over the full array to find max value */
+  maxIndex1 = -1;
+  for(i = 0; i < n; i++){
+    if((maxIndex1 == -1) || (array[i] > array[maxIndex1])){
+      maxIndex1 = i;
+    }
+  }
+  /* Go over the full array to find second max value */
+  maxIndex2 = -1;
+  for(i = 0; i < n; i++){
+    if((maxIndex1 != i) && (maxIndex2 == -1 || array[i] > array[maxIndex2])){
+      maxIndex2 = i;
+    }
+  }
+  /* Return result */
+  return ((long long) array[maxIndex1]) * array[maxIndex2];
 }
