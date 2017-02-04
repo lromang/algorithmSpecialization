@@ -2,11 +2,12 @@
 
 
 int naiveGcd(int, int);
+int eucGcd(int, int);
 
 int main(){
   int a, b;
   scanf("%d %d", &a, &b);
-  printf("%d", naiveGcd(a, b));
+  printf("%d", eucGcd(a, b));
   return 0;
 }
 
@@ -24,4 +25,16 @@ int naiveGcd(int a, int b){
     k++;
   }
   return gcd;
+}
+
+
+int eucGcd(int a, int b){
+  int min, max;
+  min = a < b ? a: b;
+  max = a > b ? a: b;
+  if( max % min == 0 ){
+    return min;
+  }else{
+    return eucGcd(max, max % min);
+  }
 }
