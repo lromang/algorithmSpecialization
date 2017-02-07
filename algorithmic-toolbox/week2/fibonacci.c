@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 
 int naiveFib(int);
 int lastDFib(int);
@@ -8,17 +9,20 @@ long long fibSum(long long);
 long long naiveFibSum(long long);
 long long  smartFibSum(long long);
 long long  smartestFibSum(long long);
+long long  trickyFib(long long);
 
 int main(){
   int i;
   long long n;
   /* Read in n for fibonacci progression */
-  // scanf("%lld", &n);
+  scanf("%lld", &n);
   /* Print results */
-  for(i = 0; i < 25; i++){
+  /*for(i = 0; i < 25; i++){
     printf("%d | %lld \n", i, smartestFibSum(i));
-  }
-  // printf("%lld", fibSum(n));
+    }*/
+  //printf("naive  %lld \n", fibSum(n));
+  //printf("smart  %lld \n", smartestFibSum(n));
+  printf("%lld", trickyFib(n));
   /* Return */
   return 0;
 }
@@ -117,4 +121,24 @@ long long naiveFibSum(long long n){
     fib += naiveFib(i);
   }
   return fib % 10;
+}
+
+long long trickyFib(long long n){
+  int i, cumsum, num_reps, res;
+  int * fib;
+  fib = (int*)malloc(60*sizeof(int));
+  for(cumsum = i = 0; i < 60; i++){
+    fib[i]  = lastDFib(i);
+    cumsum += fib[i] % 10;
+  }
+  /*
+    We know the series repeats
+    every 60 digits.
+   */
+  num_reps = (n + 1) % 60;
+  res      = (int) (cumsum * floor(num_reps/60)) % 10;
+  for(i = 0; i < num_reps; i++){
+    res += fib[i] % 10;
+  }
+  return res % 10;
 }
