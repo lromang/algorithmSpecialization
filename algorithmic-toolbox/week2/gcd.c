@@ -3,12 +3,13 @@
 
 int naiveGcd(int, int);
 int eucGcd(int, int);
-int eucGcd2(int, int);
+long long eucGcd2(long long, long long);
+long long gcm(long long, long long);
 
 int main(){
   int a, b;
   scanf("%d %d", &a, &b);
-  printf("%d", eucGcd2(a, b));
+  printf("%lld", gcm(a, b));
   return 0;
 }
 
@@ -37,7 +38,14 @@ int eucGcd(int a, int b){
   return eucGcd(max, max % min);
 }
 
-int eucGcd2(int a, int b){
+long long eucGcd2(long long a, long long b){
   if(b == 0) return a;
   return eucGcd2(b, a % b);
+}
+
+long long gcm(long long a, long long b){
+  if(a == 0 || b == 0)return 0;
+  if(a == 1)return b;
+  if(b == 1)return a;
+  return a*b/eucGcd2(a, b);
 }
