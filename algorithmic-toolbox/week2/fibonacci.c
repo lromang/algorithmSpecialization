@@ -5,7 +5,7 @@ int naiveFib(int);
 int lastDFib(int);
 long long largeMod(long long, long long);
 long long fibSum(long long);
-
+long long naiveFibSum(long long);
 
 int main(){
   long long n;
@@ -13,6 +13,7 @@ int main(){
   scanf("%lld", &n);
   /* Print results */
   printf("%lld", fibSum(n));
+  // printf("naive %lld  \n", fibSum(n));
   /* Return */
   return 0;
 }
@@ -71,4 +72,12 @@ long long fibSum(long long n){
   for(all_fibs = i = 0; i < (n + 1); i++)
     all_fibs += lastDFib(i);
   return all_fibs % 10;
+}
+
+long long naiveFibSum(long long n){
+  long long i, fib;
+  for(i = 0; i < n; i++){
+    fib += naiveFib(i);
+  }
+  return fib % 10;
 }
