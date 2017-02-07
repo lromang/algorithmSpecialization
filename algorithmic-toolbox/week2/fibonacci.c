@@ -4,13 +4,15 @@
 int naiveFib(int);
 int lastDFib(int);
 long long largeMod(long long, long long);
+long long fibSum(long long);
+
 
 int main(){
-  long long n, m;
+  long long n;
   /* Read in n for fibonacci progression */
-  scanf("%lld %lld", &n, &m);
+  scanf("%lld", &n);
   /* Print results */
-  printf("%lld", largeMod(n, m));
+  printf("%lld", fibSum(n));
   /* Return */
   return 0;
 }
@@ -46,14 +48,27 @@ int lastDFib(int n){
 
 
 long long largeMod(long long n, long long m){
-  long long period, fib_span, i;
+  long long period, res_index, i;
   long long *fib;
-  period   = m * m;
-  fib_span = n % period;
+  period    = m * m - 1;
+  res_index = n % period;
   // Allocate space for fib
   fib = (long long *) malloc(period * sizeof(long long));
-  for(i = 0; i < period; i++){
-    fib[i] = naiveFib(i);
+  /* Base case */
+  fib[0] = 0;
+  fib[1] = 1;
+  /* Fill up fib up to the point the pattern
+   * is going to start repeating itself.
+   */
+  for(i = 2; i < period; i++){
+    fib[i] = (fib[i - 1] + fib[i - 2]) % m;
   }
-  return fib[fib_span - 1] % m;
+  return fib[res_index];
+}
+
+long long fibSum(long long n){
+  long long all_fibs, i;
+  for(all_fibs = i = 0; i < (n + 1); i++)
+    all_fibs += lastDFib(i);
+  return all_fibs % 10;
 }
