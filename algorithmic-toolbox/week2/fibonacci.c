@@ -3,13 +3,14 @@
 
 int naiveFib(int);
 int lastDFib(int);
+long long largeMod(long long, long long);
 
 int main(){
-  int n;
+  long long n, m;
   /* Read in n for fibonacci progression */
-  scanf("%d", &n);
+  scanf("%lld %lld", &n, &m);
   /* Print results */
-  printf("%d", lastDFib(n));
+  printf("%lld", largeMod(n, m));
   /* Return */
   return 0;
 }
@@ -41,4 +42,18 @@ int lastDFib(int n){
     fib[i] = (fib[i - 1] + fib[i - 2]) % 10;
   }
   return fib[n];
+}
+
+
+long long largeMod(long long n, long long m){
+  long long period, fib_span, i;
+  long long *fib;
+  period   = m * m;
+  fib_span = n % period;
+  // Allocate space for fib
+  fib = (long long *) malloc(period * sizeof(long long));
+  for(i = 0; i < period; i++){
+    fib[i] = naiveFib(i);
+  }
+  return fib[fib_span - 1] % m;
 }
