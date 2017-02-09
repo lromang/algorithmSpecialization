@@ -10,19 +10,19 @@ long long naiveFibSum(long long);
 long long  smartFibSum(long long);
 long long  smartestFibSum(long long);
 long long  trickyFib(long long);
+long long  subtrickyFib(long long, long long);
 
 int main(){
-  int i;
-  long long n;
+  long long n, m;
   /* Read in n for fibonacci progression */
-  scanf("%lld", &n);
+  scanf("%lld %lld", &m, &n);
   /* Print results */
   /*for(i = 0; i < 25; i++){
     printf("%d | %lld \n", i, smartestFibSum(i));
     }*/
   //printf("naive  %lld \n", fibSum(n));
   //printf("smart  %lld \n", smartestFibSum(n));
-  printf("%lld", trickyFib(n));
+  printf("%lld", subtrickyFib(n, m));
   /* Return */
   return 0;
 }
@@ -141,4 +141,10 @@ long long trickyFib(long long n){
     res += fib[i] % 10;
   }
   return res % 10;
+}
+
+
+long long subtrickyFib(long long m, long long n){
+  if(m == n) return lastDFib(n);
+  return  trickyFib(n) - trickyFib(m);
 }
