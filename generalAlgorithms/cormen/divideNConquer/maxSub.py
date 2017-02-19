@@ -8,7 +8,7 @@ import numpy as np
 
 
 ## ----------------------------------------
-## Maximum sum problem
+## Maximum sum problem (divide and conquer)
 ## ----------------------------------------
 def maxCrossing(a, high, low, mid):
     maxLeft = maxRight = high/2
@@ -50,5 +50,31 @@ def maxArray(a, high, low):
         return lowRight, highRight, sumRight
     return lowCent, highCent, sumCent
 
-a = np.random.randint(-100, 100, size = 100)
+## ----------------------------------------
+## Maximum sum problem (linear)
+## ----------------------------------------
+def maxSumLin(a, n):
+    maxRight = maxLeft = 0
+    maxSub = []
+    maxSum = 0
+    debt   = 0
+    for i in range(n):
+        if (maxSum - debt) < 0 and 0 < a[i]:
+            maxSub  = [a[i]]
+            maxSum  = a[i]
+            maxLeft = maxRight = i
+        elif  debt + a[i] > 0:
+            maxSub.append(a[i])
+            maxSum   = maxSum + a[i] + debt
+            maxRight = maxRight + 1
+        elif maxSum != 0:
+            debt = debt + a[i]
+    return maxLeft, maxRight, maxSum
+## ----------------------------------------
+## Testing
+## ----------------------------------------
+a = np.random.randint(-100, 100, size = 10)
+
 maxArray(a, len(a) - 1, 0)
+
+maxSumLin(a, len(a))
