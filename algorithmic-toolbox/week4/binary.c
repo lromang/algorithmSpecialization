@@ -25,11 +25,10 @@ int main(){
   }
   // Print results
   ans = nbLookUp(intArray, n, intLookup, k);
-  for(i = 0; i < (int)k; i++){
-    printf("%d", ans[i]);
+  for(i = 0; i < k; i++){
+    printf("%d ", ans[i]);
   }
 }
-
 
 /*
  * Binary search
@@ -40,13 +39,13 @@ int bLookUp(int* array, int n, int element){
   if(n == 0)
     return -1;
   // Case length array > 0
-  h = n;
+  h = n - 1;
   l = 0;
   while(l <= h){
-    m = floor((h + l)/2);
+    m = (int)floor((h + l)/2);
     if(array[m] == element) return m;
-    if(array[m] > element) h = m;
-    else l = m;
+    if(array[m] > element) h = m - 1;
+    else l = m + 1;
   }
   return -1;
 }
