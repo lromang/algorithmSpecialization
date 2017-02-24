@@ -39,8 +39,8 @@ int* fixPoint(int * a, int lo, int hi){
   int k, i, j, pivot, eq;
   int * ans;
   // Init variables
-  ans = (int*) malloc(2*sizeof(int));
-  k = rand() % (hi - lo) + lo;
+  ans   = (int*) malloc(2*sizeof(int));
+  k     = rand() % (hi - lo) + lo;
   swap(a, lo, k);
   pivot = a[lo];
   printf("\nPIVOT: %d \n", pivot);
@@ -52,14 +52,16 @@ int* fixPoint(int * a, int lo, int hi){
       eq ++;
     }else if(a[i] < pivot){
       swap(a, j, i);
-      swap(a, eq, i);
+      if(eq > j){
+        swap(a, eq, i);
+      }
       eq ++;
       j ++;
     }
   }
   swap(a, lo, j - 1);
   // RES
-  ans[0] = j - 1;
+  ans[0] = j  - 1;
   ans[1] = eq - 1;
   return ans;
 }
