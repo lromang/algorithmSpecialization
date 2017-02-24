@@ -1,8 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 
-int majority(int*, int);
-int twoMajority(int*, int);
+typedef struct {
+  int element;
+  int count;
+  int isMajority;
+} comparable;
+
+comparable* comPmajority(int*, int, int);
 
 int main(){
   int i, n;
@@ -15,18 +21,32 @@ int main(){
   for(i = 0; i < n; i++){
     scanf("%d", &array[i]);
   }
-  // Print array
-  for(i = 0; i < n; i++ ){
-    printf("%d", array[i]);
-  }
+  // Print results
+  printf("%d", majority(array, 0, n));
   return 0;
 }
 
 
-int majority(int *array, int n){
-  if(n == 0)return 0;
-}
+comparable* comPmajority(int *array, int l, int h){
+  // Variable declaration
+  int m;
+  comparable *low, *high;
+  // Variable initialization
+  low  = (comparable*)malloc(sizeof(comparable*));
+  high = (comparable*)malloc(sizeof(comparable*));
+  low->count      = high->count      = 0;
+  low->element    = high->element    = 0;
+  low->isMajority = high->isMajority = 0;
+  // Base case
+  if(h == l){
+    low->element    = array[h];
+    low->count      = 1;
+    low->isMajority = 1;
+    return low;
+  }
+  // Recursive call
 
-int twoMajority(int *array, int n){
-  return n == 1 || array[1] == array[2];
+
+  m = floor((l + h) / 2);
+  return majority(array, m, h) || majority(array, l, m);
 }
