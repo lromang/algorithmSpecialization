@@ -12,8 +12,7 @@ int main(){
   scanf("%d", &n);
   array = (int * )malloc(n*sizeof(int));
   for(i = 0; i < n; i++){
-    array[i] = rand() % 10;
-    printf("%d ", array[i]);
+    scanf("%d", &array[i]);
   }
   printf("\n");
   qSort(array, 0, n);
@@ -43,7 +42,6 @@ int* fixPoint(int * a, int lo, int hi){
   k     = rand() % (hi - lo) + lo;
   swap(a, lo, k);
   pivot = a[lo];
-  printf("\nPIVOT: %d \n", pivot);
   j     = lo + 1;
   eq    = lo + 1;
   for(i = lo + 1; i < hi; i++){
@@ -71,6 +69,6 @@ void qSort(int*a, int lo, int hi){
   if(lo < hi){
     p = fixPoint(a, lo, hi);
     qSort(a, p[1] + 1, hi);
-    qSort(a, lo, p[0] - 1);
+    qSort(a, lo, p[0]);
   }
 }
