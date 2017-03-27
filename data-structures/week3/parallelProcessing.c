@@ -15,7 +15,6 @@
 // Generic heap sort implementation.
 long long  leftChild(long long);
 long long  rightChild(long long);
-long long  getParent(long long);
 void swiftDown(long long**, long long, long long);
 long long  min(long long**, long long, long long);
 void buildHeap(long long**, long long);
@@ -42,7 +41,6 @@ int main(){
   // Fill in threads array.
   for(i = 0; i < nThreads; i++){
     threads[i] = (long long*)calloc(2, sizeof(long long));
-    threads[i][0] = 0;
     threads[i][1] = i;
   }
   // Fill in tasks array.
@@ -65,15 +63,11 @@ int main(){
  * ----------------------------------------
  */
 long long leftChild(long long index){
-  return index * 2 + 1;
+  return (index << 1) + 1;
 }
 
 long long rightChild(long long index){
-  return (index + 1) * 2;
-}
-
-long long getParent(long long index){
-  return floor((index - 1)) / 2;
+  return (index + 1) << 1;
 }
 
 /*
@@ -120,7 +114,7 @@ void swiftDown(long long** array, long long size, long long index){
 
 void buildHeap(long long** array, long long size){
   long long i, midSize;
-  midSize = floor((size - 1) / 2);
+  midSize = floor((size - 1) >> 1);
   for(i = midSize; i >= 0; i--){
     swiftDown(array, size, i);
   }
@@ -151,7 +145,8 @@ void sortArray(long long** array, long long size){
  * ----------------------------------------
  */
 
-long long fillInThreads(long long** threads, long long nThreads, long long* tasks, long long nTasks, long long* processingThread, long long* processingTime){
+long long fillInThreads(long long** threads, long long nThreads, long long* tasks,
+                        long long nTasks, long long* processingThread, long long* processingTime){
   long long minSize, i;
   minSize = nThreads < nTasks ? nThreads : nTasks;
   for(i = 0; i < minSize; i++){
@@ -169,7 +164,8 @@ void updateThreads(long long** threads, long long nThreads, long long amount){
   }
 }
 
-void processTasks(long long** threads, long long nThreads, long long* tasks, long long nTasks, long long* processingThread, long long* processingTime){
+void processTasks(long long** threads, long long nThreads, long long* tasks,
+                  long long nTasks, long long* processingThread, long long* processingTime){
   long long tasksInProcess, time;
   time           = 0;
   tasksInProcess = fillInThreads(threads, nThreads, tasks, nTasks, processingThread, processingTime);
