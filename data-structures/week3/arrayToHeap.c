@@ -10,6 +10,10 @@ int rightChild(int);
 int parent(int*, int);
 int min(int*, int, int, int, int);
 void printPrintable(int**);
+void printArray(int*, int);
+void inPlaceSorting(int*, int **, int);
+void extractMin(int*, int);
+void swiftDown(int*, int);
 
 int main(){
   int** printables;
@@ -19,17 +23,20 @@ int main(){
   scanf("%d", &n);
   // Allocate memory for array.
   array         = (int*)calloc(n, sizeof(int));
-  printables    = (int**)calloc((n + 1), sizeof(int));
+  printables    = (int**)calloc((n + 1) * 2, sizeof(int));
   printables[0] = (int*)calloc(1, sizeof(int));
-  printables[1] = (int*)calloc(n, sizeof(int));
+  printables[1] = (int*)calloc(n * 2, sizeof(int));
   // Scan elements of array.
   for(i = 0; i < n; i++){
     scanf("%d", &array[i]);
   }
   // Build Heap.
-  buildHeap(array, printables,  n);
+  // buildHeap(array, printables,  n);
   // Print elements of array.
-  printPrintable(printables);
+  // printPrintable(printables);
+  inPlaceSorting(array, printables, n);
+  printArray(array, n);
+  // return
   return 0;
 }
 
@@ -68,14 +75,9 @@ void buildHeap(int* array, int** pResults, int size){
   searchSize = (int)floor((size - 2) / 2);
   k = 0;
   for(i = searchSize; i >= 0; i--){
-    // printf("i = %d\n", i);
     j = i;
     while(j <= (int)floor(size / 2)){
-      /*
-       *printf("j = %d\n", j);
-       *printf("left Child = %d \n", leftChild(j));
-       *printf("right Child = %d \n", rightChild(j));
-      */
+      // Get min index
       minIndex = min(array,
                      j,
                      leftChild(j),
@@ -92,6 +94,44 @@ void buildHeap(int* array, int** pResults, int size){
       pResults[0][0]++;
       k+=2;
     }
+  }
+}
+
+void swiftDown(int* array, int size){
+  int i, minIndex;
+  minIndex = i = 0;
+  while(1){
+    minIndex = min(array,
+                   i,
+                   leftChild(i),
+                   rightChild(i),
+                   size);
+    if(minIndex == i)
+      break;
+    swap(array, i, minIndex);
+    i = minIndex;
+  }
+}
+
+void extractMin(int* array, int size){
+  swap(array, 0, size - 1);
+  swiftDown(array, size - 1);
+ }
+
+void inPlaceSorting(int* array, int ** pResults, int size){
+  int i, auxSize;
+  auxSize = size;
+  buildHeap(array, pResults, size);
+  for(i = 0; i < size; i++){
+    extractMin(array, auxSize);
+    auxSize--;
+  }
+}
+
+void printArray(int* array, int size){
+  int i;
+  for(i = 0; i < size; i++){
+    printf("%d ", array[i]);
   }
 }
 
