@@ -13,38 +13,48 @@
 
 
 // Generic heap sort implementation.
-int  leftChild(int);
-int  rightChild(int);
-int  getParent(int);
-void swiftDown(int**, int, int);
-int  min(int**, int, int);
-void buildHeap(int**, int);
-void printArray(int**, int, int);
-void sortArray(int**, int);
-void swap(int**, int, int);
+long long  leftChild(long long);
+long long  rightChild(long long);
+long long  getParent(long long);
+void swiftDown(long long**, long long, long long);
+long long  min(long long**, long long, long long);
+void buildHeap(long long**, long long);
+void printArray(long long**, long long, long long);
+void sortArray(long long**, long long);
+void swap(long long**, long long, long long);
 
 // Parallel processing.
-int fillInThreads(int**, int, int*, int, int*, int*);
-void processTasks(int**, int, int*, int, int*, int*);
+long long fillInThreads(long long**, long long, long long*, long long, long long*, long long*);
+void processTasks(long long**, long long, long long*, long long, long long*, long long*);
+void updateThreads(long long**, long long, long long);
 
 int main(){
-  int   size, i;
-  int** array;
+  long long nThreads, nTasks,  i;
+  long long *tasks, *pTimes, *pThreads;
+  long long **threads;
   // Read in size of array.
-  scanf("%d", &size);
-  // Allocate memory.
-  array = (int**)calloc(size*2, sizeof(int*));
-  // Read in array
-  for(i = 0; i < size; i++){
-    array[i]    = (int*)calloc(2, sizeof(int));
-    scanf("%d", &array[i][0]);
-    array[i][1] = i;
+  scanf("%lld %lld", &nThreads, &nTasks);
+  // Allocate memory for threads and tasks.
+  threads  = (long long**)calloc(nThreads * 2, sizeof(long long*));
+  tasks    = (long long*)calloc(nTasks, sizeof(long long*));
+  pTimes   = (long long*)calloc(nTasks, sizeof(long long*));
+  pThreads = (long long*)calloc(nTasks, sizeof(long long*));
+  // Fill in threads array.
+  for(i = 0; i < nThreads; i++){
+    threads[i] = (long long*)calloc(2, sizeof(long long));
+    threads[i][0] = 0;
+    threads[i][1] = i;
   }
-  // Build headp.
-  sortArray(array, size);
-  // Print array.
-  printArray(array, size, 0);
-  printArray(array, size, 1);
+  // Fill in tasks array.
+  for(i = 0; i < nTasks; i++){
+    scanf("%lld", &tasks[i]);
+  }
+  // Process tasks.
+  processTasks(threads, nThreads, tasks, nTasks, pThreads, pTimes);
+  // Print results.
+  for(i = 0; i < nTasks; i++){
+    printf("%lld %lld \n", pThreads[i], pTimes[i]);
+  }
   return 0;
 }
 
@@ -54,15 +64,15 @@ int main(){
  * Generic heap sort implementation.
  * ----------------------------------------
  */
-int leftChild(int index){
+long long leftChild(long long index){
   return index * 2 + 1;
 }
 
-int rightChild(int index){
+long long rightChild(long long index){
   return (index + 1) * 2;
 }
 
-int getParent(int index){
+long long getParent(long long index){
   return floor((index - 1)) / 2;
 }
 
@@ -70,27 +80,37 @@ int getParent(int index){
  * Swap:
  * changes the position of two members of array.
  */
-void swap(int** array, int index1, int index2){
-  int* aux;
-  aux = array[index1];
+void swap(long long** array, long long index1, long long index2){
+  long long* aux;
+  aux           = array[index1];
   array[index1] = array[index2];
   array[index2] = aux;
 }
 
-int min(int** array, int size, int index){
-  int minIndex, left, right;
+long long min(long long** array, long long size, long long index){
+  long long minIndex, left, right;
   left     = leftChild(index);
   right    = rightChild(index);
   minIndex = index;
   if(left  < size && array[index][0]    > array[left][0])  minIndex = left;
   if(right < size && array[minIndex][0] > array[right][0]) minIndex = right;
+  // Breaking ties with index
+  if(((left < size) && (right < size)) && ((index != minIndex) && (array[right][0] == array[left][0])))
+    minIndex = array[right][1] < array[left][1] ? right : left;
+  if((right < size) && ((left  != minIndex) && (array[index][0] == array[right][0])))
+    minIndex = array[right][1] < array[index][1] ? right : index;
+  if((left < size) && ((right != minIndex) && (array[index][0] == array[left][0])))
+    minIndex = array[left][1] < array[index][1] ? left : index;
+  if(((left < size) && (right < size)) && ((array[left][0] == array[right][0]) && (array[right][0] == array[index][0])))
+    minIndex = array[left][1] < array[index][1] ? array[left][1] < array[right][1] ? left : right : array[index][1] < array[right][1] ? index : right;
+  // Return min index
   return minIndex;
 }
 
-void swiftDown(int** array, int size, int index){
-  int i, minIndex;
+void swiftDown(long long** array, long long size, long long index){
+  long long i, minIndex;
   i = index;
-  while(1){
+  while(i < size){
     minIndex = min(array, size, i);
     if(i == minIndex) break;
     swap(array, i, minIndex);
@@ -98,26 +118,26 @@ void swiftDown(int** array, int size, int index){
   }
 }
 
-void buildHeap(int** array, int size){
-  int i, midSize;
+void buildHeap(long long** array, long long size){
+  long long i, midSize;
   midSize = floor((size - 1) / 2);
   for(i = midSize; i >= 0; i--){
     swiftDown(array, size, i);
   }
 }
 
-void printArray(int** array, int size, int index){
-  int i;
+void printArray(long long** array, long long size, long long index){
+  long long i;
   printf("\n");
   for(i = 0; i < size; i++){
-    printf("%d ", array[i][index]);
+    printf("%lld ", array[i][index]);
   }
   printf("\n");
 }
 
 
-void sortArray(int** array, int size){
-  int i;
+void sortArray(long long** array, long long size){
+  long long i;
   buildHeap(array, size);
   for(i = size - 1; i >= 0; i--){
     swap(array, 0, i);
@@ -131,8 +151,8 @@ void sortArray(int** array, int size){
  * ----------------------------------------
  */
 
-int fillInThreads(int** threads, int nThreads, int* tasks, int nTasks, int* processingThread, int* processingTime){
-  int minSize, i;
+long long fillInThreads(long long** threads, long long nThreads, long long* tasks, long long nTasks, long long* processingThread, long long* processingTime){
+  long long minSize, i;
   minSize = nThreads < nTasks ? nThreads : nTasks;
   for(i = 0; i < minSize; i++){
     threads[i][0]       = tasks[i];
@@ -142,28 +162,27 @@ int fillInThreads(int** threads, int nThreads, int* tasks, int nTasks, int* proc
   return minSize;
 };
 
-void updateThreads(int** threads, int nThreads){
-  int i;
+void updateThreads(long long** threads, long long nThreads, long long amount){
+  long long i;
   for(i = 0; i < nThreads; i++){
-    threads[0][i]--;
+    threads[i][0] = threads[i][0] -  amount;
   }
 }
 
-void processTasks(int** threads, int nThreads, int* tasks, int nTasks, int* processingThread, int* processingTime){
-  int tasksInProcess, time;
+void processTasks(long long** threads, long long nThreads, long long* tasks, long long nTasks, long long* processingThread, long long* processingTime){
+  long long tasksInProcess, time;
   time           = 0;
   tasksInProcess = fillInThreads(threads, nThreads, tasks, nTasks, processingThread, processingTime);
   buildHeap(threads, nThreads);
-  while(tasksInProcess < nTasks - 1){
+  while(tasksInProcess < nTasks){
+    time += threads[0][0];
+    updateThreads(threads, nThreads, threads[0][0]);
     while(threads[0][0] == 0){
-      tasksInProcess++;
-      threads[0][0] = tasks[tasksInProcess];
-      buildHeap(threads, nThreads);
-      // Update processing info
       processingTime[tasksInProcess]   = time;
-      processingThread[tasksInProcess] = threads[1][0];
+      processingThread[tasksInProcess] = threads[0][1];
+      threads[0][0]                    = tasks[tasksInProcess];
+      buildHeap(threads, nThreads);
+      tasksInProcess++;
     }
-    updateThreads(threads, nThreads);
-    time++;
   }
 }
