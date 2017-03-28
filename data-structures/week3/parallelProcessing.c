@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <time.h>
 
 /*
  * A priority list is to be implemented with the times
@@ -45,14 +46,16 @@ int main(){
   }
   // Fill in tasks array.
   for(i = 0; i < nTasks; i++){
-    scanf("%lld", &tasks[i]);
+    //  scanf("%lld", &tasks[i]);
+    // Testing
+    tasks[i] = random();
   }
   // Process tasks.
   processTasks(threads, nThreads, tasks, nTasks, pThreads, pTimes);
   // Print results.
-  for(i = 0; i < nTasks; i++){
+  /*  for(i = 0; i < nTasks; i++){
     printf("%lld %lld \n", pThreads[i], pTimes[i]);
-  }
+    }*/
   return 0;
 }
 
@@ -165,9 +168,11 @@ void updateThreads(long long** threads, long long nThreads, long long amount){
 void processTasks(long long** threads, long long nThreads, long long* tasks,
                   long long nTasks, long long* processingThread, long long* processingTime){
   long long tasksInProcess, time;
+  clock_t begin;
   time           = 0;
   tasksInProcess = fillInThreads(threads, nThreads, tasks, nTasks, processingThread);
   buildHeap(threads, nThreads);
+  begin = clock();
   while(tasksInProcess < nTasks){
     time += threads[0][0];
     updateThreads(threads, nThreads, threads[0][0]);
@@ -179,4 +184,5 @@ void processTasks(long long** threads, long long nThreads, long long* tasks,
       tasksInProcess++;                                         // Increase number of processed tasks.
     }while(threads[0][0] == 0);
   }
+  printf("%f", (double)(clock() - begin)/CLOCKS_PER_SEC);
 }
