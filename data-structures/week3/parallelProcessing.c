@@ -23,7 +23,7 @@ void sortArray(long long**, long long);
 void swap(long long**, long long, long long);
 
 // Parallel processing.
-long long fillInThreads(long long**, long long, long long*, long long, long long*, long long*);
+long long fillInThreads(long long**, long long, long long*, long long, long long*);
 void processTasks(long long**, long long, long long*, long long, long long*, long long*);
 void updateThreads(long long**, long long, long long);
 
@@ -104,7 +104,7 @@ long long min(long long** array, long long size, long long index){
 void swiftDown(long long** array, long long size, long long index){
   long long i, minIndex;
   i = index;
-  while(i < size){
+  while(1){
     minIndex = min(array, size, i);
     if(i == minIndex) break;
     swap(array, i, minIndex);
@@ -129,7 +129,6 @@ void printArray(long long** array, long long size, long long index){
   printf("\n");
 }
 
-
 void sortArray(long long** array, long long size){
   long long i;
   buildHeap(array, size);
@@ -146,13 +145,12 @@ void sortArray(long long** array, long long size){
  */
 
 long long fillInThreads(long long** threads, long long nThreads, long long* tasks,
-                        long long nTasks, long long* processingThread, long long* processingTime){
+                        long long nTasks, long long* processingThread){
   long long minSize, i;
   minSize = nThreads < nTasks ? nThreads : nTasks;
   for(i = 0; i < minSize; i++){
     threads[i][0]       = tasks[i];
     processingThread[i] = i; // Put to work every avilable thread.
-    processingTime[i]   = 0; // Initial work time = 0.
   }
   return minSize;
 };
@@ -168,17 +166,17 @@ void processTasks(long long** threads, long long nThreads, long long* tasks,
                   long long nTasks, long long* processingThread, long long* processingTime){
   long long tasksInProcess, time;
   time           = 0;
-  tasksInProcess = fillInThreads(threads, nThreads, tasks, nTasks, processingThread, processingTime);
+  tasksInProcess = fillInThreads(threads, nThreads, tasks, nTasks, processingThread);
   buildHeap(threads, nThreads);
   while(tasksInProcess < nTasks){
     time += threads[0][0];
     updateThreads(threads, nThreads, threads[0][0]);
-    while(threads[0][0] == 0){
-      processingTime[tasksInProcess]   = time;
-      processingThread[tasksInProcess] = threads[0][1];
-      threads[0][0]                    = tasks[tasksInProcess];
-      buildHeap(threads, nThreads);
-      tasksInProcess++;
-    }
+    do{
+      processingTime[tasksInProcess]   = time;                  // Save starting processing time of task.
+      processingThread[tasksInProcess] = threads[0][1];         // Save thread index working on task.
+      threads[0][0]                    = tasks[tasksInProcess]; // Update root bussy time
+      swiftDown(threads, nThreads, 0);                          // Preserve heap condition.
+      tasksInProcess++;                                         // Increase number of processed tasks.
+    }while(threads[0][0] == 0);
   }
 }
