@@ -46,16 +46,16 @@ int main(){
   }
   // Fill in tasks array.
   for(i = 0; i < nTasks; i++){
-    //  scanf("%lld", &tasks[i]);
+    scanf("%lld", &tasks[i]);
     // Testing
-    tasks[i] = random();
+    //tasks[i] = random();
   }
   // Process tasks.
   processTasks(threads, nThreads, tasks, nTasks, pThreads, pTimes);
   // Print results.
-  /*  for(i = 0; i < nTasks; i++){
+  for(i = 0; i < nTasks; i++){
     printf("%lld %lld \n", pThreads[i], pTimes[i]);
-    }*/
+   }
   return 0;
 }
 
@@ -184,5 +184,5 @@ void processTasks(long long** threads, long long nThreads, long long* tasks,
       tasksInProcess++;                                         // Increase number of processed tasks.
     }while(threads[0][0] == 0);
   }
-  printf("%f", (double)(clock() - begin)/CLOCKS_PER_SEC);
+  printf("%f\n", (double)(clock() - begin)/CLOCKS_PER_SEC);
 }
