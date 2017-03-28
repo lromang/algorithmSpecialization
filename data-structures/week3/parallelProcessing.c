@@ -29,9 +29,12 @@ void processTasks(long long**, long long, long long*, long long, long long*, lon
 void updateThreads(long long**, long long, long long);
 
 int main(){
+  int testing;
   long long nThreads, nTasks,  i;
   long long *tasks, *pTimes, *pThreads;
   long long **threads;
+  // Testing mode.
+  testing = 0;
   // Read in size of array.
   scanf("%lld %lld", &nThreads, &nTasks);
   // Allocate memory for threads and tasks.
@@ -46,16 +49,20 @@ int main(){
   }
   // Fill in tasks array.
   for(i = 0; i < nTasks; i++){
-    scanf("%lld", &tasks[i]);
-    // Testing
-    //tasks[i] = random();
+    if(!testing){
+      scanf("%lld", &tasks[i]);
+    }else{
+      tasks[i] = random();
+    }
   }
   // Process tasks.
   processTasks(threads, nThreads, tasks, nTasks, pThreads, pTimes);
   // Print results.
-  for(i = 0; i < nTasks; i++){
-    printf("%lld %lld \n", pThreads[i], pTimes[i]);
-   }
+  if(!testing){
+    for(i = 0; i < nTasks; i++){
+      printf("%lld %lld \n", pThreads[i], pTimes[i]);
+    }
+  }
   return 0;
 }
 
@@ -89,17 +96,19 @@ long long min(long long** array, long long size, long long index){
   left     = leftChild(index);
   right    = rightChild(index);
   minIndex = index;
-  if(left  < size && array[index][0]    > array[left][0])  minIndex = left;
-  if(right < size && array[minIndex][0] > array[right][0]) minIndex = right;
-  // Breaking ties with index
-  if(((left < size) && (right < size)) && ((index != minIndex) && (array[right][0] == array[left][0])))
-    minIndex = array[right][1] < array[left][1] ? right : left;
-  if((right < size) && ((left  != minIndex) && (array[index][0] == array[right][0])))
-    minIndex = array[right][1] < array[index][1] ? right : index;
-  if((left < size) && ((right != minIndex) && (array[index][0] == array[left][0])))
-    minIndex = array[left][1] < array[index][1] ? left : index;
-  if(((left < size) && (right < size)) && ((array[left][0] == array[right][0]) && (array[right][0] == array[index][0])))
-    minIndex = array[left][1] < array[index][1] ? array[left][1] < array[right][1] ? left : right : array[index][1] < array[right][1] ? index : right;
+  // Left child comparison.
+  if((left < size) && array[index][0] > array[left][0]){
+    minIndex = left;
+  }else if(((left < size) && array[index][0] == array[left][0]) && array[index][1] > array[left][1]){
+    minIndex = left;
+  }
+  // Right child comparison.
+  if((right < size) && array[minIndex][0] > array[right][0]){
+    minIndex = right;
+  }else if(((right < size) && array[minIndex][0] == array[right][0]) && array[minIndex][1] > array[right][1]){
+    minIndex = right;
+  }
+
   // Return min index
   return minIndex;
 }
@@ -167,9 +176,9 @@ void updateThreads(long long** threads, long long nThreads, long long amount){
 
 void processTasks(long long** threads, long long nThreads, long long* tasks,
                   long long nTasks, long long* processingThread, long long* processingTime){
-  long long tasksInProcess, time;
+  long long tasksInProcess, time, insideLoop;
   clock_t begin;
-  time           = 0;
+  insideLoop = time = 0;
   tasksInProcess = fillInThreads(threads, nThreads, tasks, nTasks, processingThread);
   buildHeap(threads, nThreads);
   begin = clock();
@@ -177,12 +186,14 @@ void processTasks(long long** threads, long long nThreads, long long* tasks,
     time += threads[0][0];
     updateThreads(threads, nThreads, threads[0][0]);
     do{
+      insideLoop++;
       processingTime[tasksInProcess]   = time;                  // Save starting processing time of task.
       processingThread[tasksInProcess] = threads[0][1];         // Save thread index working on task.
       threads[0][0]                    = tasks[tasksInProcess]; // Update root bussy time
       swiftDown(threads, nThreads, 0);                          // Preserve heap condition.
-      tasksInProcess++;                                         // Increase number of processed tasks.
+      if(tasksInProcess++ >= nTasks) break;
     }while(threads[0][0] == 0);
   }
-  printf("%f\n", (double)(clock() - begin)/CLOCKS_PER_SEC);
+  printf("Inner Loop: %lld\n", insideLoop);
+  printf("Time: %f\n", (double)(clock() - begin)/CLOCKS_PER_SEC);
 }
