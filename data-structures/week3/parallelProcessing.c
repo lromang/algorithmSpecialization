@@ -108,7 +108,6 @@ long long min(long long** array, long long size, long long index){
   }else if(((right < size) && array[minIndex][0] == array[right][0]) && array[minIndex][1] > array[right][1]){
     minIndex = right;
   }
-
   // Return min index
   return minIndex;
 }
@@ -170,7 +169,7 @@ long long fillInThreads(long long** threads, long long nThreads, long long* task
 void updateThreads(long long** threads, long long nThreads, long long amount){
   long long i;
   for(i = 0; i < nThreads; i++){
-    threads[i][0] = threads[i][0] -  amount;
+    threads[i][0] -=  amount;
   }
 }
 
