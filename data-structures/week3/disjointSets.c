@@ -2,7 +2,7 @@
 #include <stdlib.h>
 
 int find(int*, int);
-void disUnion(int*, int*, int, int);
+void disUnion(int*, int*, int*, int*, int, int);
 
 // Take into consideration max at each union.
 
@@ -10,7 +10,7 @@ int main(){
   // Variable declaration.
   int **queries;
   int *tables, *parents, *rank;
-  int nTables, nQueries, i, maxRows, rows;
+  int nTables, nQueries, i, maxRows;
   // Read in size of elements.
   scanf("%d %d", &nTables, &nQueries);
   // Allocate space.
@@ -29,7 +29,13 @@ int main(){
     // Allocate space
     queries[i] = (int*) calloc(2, sizeof(int));
     scanf("%d %d", &queries[i][0], &queries[i][1]);
-    }
+  }
+  // Perform Queries
+  for(i = 0; i < nQueries; i++){
+    disUnion(parents, tables, rank, &maxRows, queries[i][0] - 1, queries[i][1] - 1);
+    // Print max rows
+    printf("Max iter %d = %d \n", i, maxRows);
+  }
   return 0;
 }
 
@@ -43,12 +49,13 @@ int find(int* parents, int index){
 }
 
 // Creates union of sets containing index1, index2
-void disUnion(int* parents, int* rank, int index1, int index2){
-  int parent1, parent2;
-  // Get parents
+void disUnion(int* parents, int* tables, int* rank, int* maxRows, int index1, int index2){
+  int parent1, parent2, rows;
+  // Get tables
   parent1 = find(parents, index1);
   parent2 = find(parents, index2);
   // If they are not in the same set, break.
+  rows = tables[parent1] + tables[parent2];
   if(parent1 != parent2){
     // Check if rank[parent1] > rank[parent2]
     if(rank[parent1] > rank[parent2]){
@@ -59,5 +66,10 @@ void disUnion(int* parents, int* rank, int index1, int index2){
       parents[parent1] = parent2;
       rank[parent2]++;
     }
+    // Update table rows.
+    tables[parent1] = rows;
+    tables[parent2] = rows;
+    // Update maxRows
+    *maxRows = *maxRows > rows? *maxRows : rows;
   }
 }
