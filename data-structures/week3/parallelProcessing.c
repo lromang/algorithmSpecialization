@@ -3,6 +3,9 @@
 #include <math.h>
 #include <time.h>
 
+// Testing mode
+#define TESTING 1
+
 /*
  * A priority list is to be implemented with the times
  * of a thread to be completed.
@@ -14,8 +17,8 @@
 
 
 // Generic heap sort implementation.
-long long  leftChild(long long);
-long long  rightChild(long long);
+long long leftChild(long long);
+long long rightChild(long long);
 void swiftDown(long long**, long long, long long);
 long long  min(long long**, long long, long long);
 void buildHeap(long long**, long long);
@@ -29,12 +32,9 @@ void processTasks(long long**, long long, long long*, long long, long long*, lon
 void updateThreads(long long**, long long, long long);
 
 int main(){
-  int testing;
   long long nThreads, nTasks,  i;
   long long *tasks, *pTimes, *pThreads;
   long long **threads;
-  // Testing mode.
-  testing = 0;
   // Read in size of array.
   scanf("%lld %lld", &nThreads, &nTasks);
   // Allocate memory for threads and tasks.
@@ -49,23 +49,22 @@ int main(){
   }
   // Fill in tasks array.
   for(i = 0; i < nTasks; i++){
-    if(!testing){
-      scanf("%lld", &tasks[i]);
-    }else{
+    if(TESTING){
       tasks[i] = random();
+    }else{
+      scanf("%lld", &tasks[i]);
     }
   }
   // Process tasks.
   processTasks(threads, nThreads, tasks, nTasks, pThreads, pTimes);
   // Print results.
-  if(!testing){
+  if(!TESTING){
     for(i = 0; i < nTasks; i++){
       printf("%lld %lld \n", pThreads[i], pTimes[i]);
     }
   }
   return 0;
 }
-
 
 /*
  * ----------------------------------------
@@ -185,14 +184,16 @@ void processTasks(long long** threads, long long nThreads, long long* tasks,
     time += threads[0][0];
     updateThreads(threads, nThreads, threads[0][0]);
     do{
-      insideLoop++;
+      insideLoop+=threads[0][0] == 0;
       processingTime[tasksInProcess]   = time;                  // Save starting processing time of task.
       processingThread[tasksInProcess] = threads[0][1];         // Save thread index working on task.
-      threads[0][0]                    = tasks[tasksInProcess]; // Update root bussy time
+      threads[0][0]                    = tasks[tasksInProcess]; // Update root processing time
       swiftDown(threads, nThreads, 0);                          // Preserve heap condition.
       if(tasksInProcess++ >= nTasks) break;
     }while(threads[0][0] == 0);
   }
-  printf("Inner Loop: %lld\n", insideLoop);
-  printf("Time: %f\n", (double)(clock() - begin)/CLOCKS_PER_SEC);
+  if(TESTING){
+    printf("Inner Loop: %lld\n", insideLoop);
+    printf("Time: %f\n", (double)(clock() - begin)/CLOCKS_PER_SEC);
+  }
 }
